@@ -19,8 +19,7 @@ Aplikasi demo Android sederhana yang dibuat menggunakan **Kotlin** dan **Jetpack
 | Layar Utama |
 | :---: |
 |  |
-
-*([Catatan: Anda dapat mengganti placeholder ini dengan tangkapan layar asli aplikasi.](https://raw.githubusercontent.com/mamat1815/Notifications/refs/heads/master/image.png))*
+![Catatan: Anda dapat mengganti placeholder ini dengan tangkapan layar asli aplikasi.](https://raw.githubusercontent.com/mamat1815/Notifications/refs/heads/master/image.png)
 
 -----
 
