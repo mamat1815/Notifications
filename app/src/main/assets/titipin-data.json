@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "nama_barang": "Nasi Goreng Spesial",
+    "pemesan": "Dika",
+    "estimasi_harga": 25000,
+    "catatan": "Pedas, jangan pakai acar"
+  },
+  {
+    "id": 2,
+    "nama_barang": "Kopi Susu Gula Aren",
+    "pemesan": "Sarah",
+    "estimasi_harga": 18000,
+    "catatan": "Es sedikit saja"
+  },
+  {
+    "id": 3,
+    "nama_barang": "Roti Bakar Coklat",
+    "pemesan": "Budi",
+    "estimasi_harga": 15000,
+    "catatan": "Dibungkus terpisah"
+  }
+]
