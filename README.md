@@ -1,71 +1,77 @@
-🔔 Notifications (Titip.in Demo)
+# 🔔 Notifications (Titip.in Demo)
 
-Aplikasi demo Android sederhana yang dibuat menggunakan Kotlin dan Jetpack Compose. Proyek ini secara khusus berfokus pada implementasi fitur Notifikasi dan penanganan izin notifikasi untuk perangkat modern (Android 13/API 33+).
+Aplikasi demo Android sederhana yang dibuat menggunakan **Kotlin** dan **Jetpack Compose**. Proyek ini secara khusus berfokus pada implementasi fitur **Notifikasi** dan penanganan izin notifikasi untuk perangkat modern (Android 13/API 33+).
 
-🚀 Fitur Utama
+-----
 
-Pemuatan Data Lokal: Aplikasi memuat daftar tugas/titipan dari file JSON statis (titipin-data.json) yang disimpan di folder assets [cite: uploaded:mamat1815/notifications/Notifications-fa0f39099098de06e52437d3f8aab18352efeb79/app/src/main/assets/titipin-data.json, uploaded:mamat1815/notifications/Notifications-fa0f39099098de06e52437d3f8aab18352efeb79/app/src/main/java/com/afsar/notifications/data/local/TitipanRepository.kt].
+## 🚀 Fitur Utama
 
-Tampilan Daftar: Menampilkan data barang titipan (nama barang, pemesan, harga, dan catatan) dalam LazyColumn di TitipanScreen [cite: uploaded:mamat1815/notifications/Notifications-fa0f39099098de06e52437d3f8aab18352efeb79/app/src/main/java/com/afsar/notifications/TitipanScreen.kt].
+  * **Pemuatan Data Lokal:** Aplikasi memuat daftar tugas/titipan dari file JSON statis (`titipin-data.json`) yang disimpan di folder `assets`.
+  * **Tampilan Daftar:** Menampilkan data barang titipan (nama barang, pemesan, harga, dan catatan) dalam `LazyColumn` di `TitipanScreen`.
+  * **Pemicu Notifikasi:** Notifikasi akan dipicu secara otomatis segera setelah proses pemuatan data selesai.
+  * **Notifikasi Adaptif (API 33+):** Aplikasi meminta izin `android.permission.POST_NOTIFICATIONS` secara dinamis saat dijalankan di Android 13 (TIRAMISU) atau versi yang lebih baru.
+  * **Pesan Notifikasi Acak:** Pesan notifikasi yang ditampilkan dipilih secara acak dari salah satu item data yang berhasil dimuat.
 
-Pemicu Notifikasi: Notifikasi akan dipicu secara otomatis segera setelah proses pemuatan data selesai [cite: uploaded:mamat1815/notifications/Notifications-fa0f39099098de06e52437d3f8aab18352efeb79/app/src/main/java/com/afsar/notifications/TitipanScreen.kt, uploaded:mamat1815/notifications/Notifications-fa0f39099098de06e52437d3f8aab18352efeb79/app/src/main/java/com/afsar/notifications/ui/viewmodel/TitipanViewModel.kt].
+-----
 
-Notifikasi Adaptif (API 33+): Aplikasi meminta izin android.permission.POST_NOTIFICATIONS secara dinamis saat dijalankan di Android 13 (TIRAMISU) atau versi yang lebih baru [cite: uploaded:mamat1815/notifications/Notifications-fa0f39099098de06e52437d3f8aab18352efeb79/app/src/main/AndroidManifest.xml, uploaded:mamat1815/notifications/Notifications-fa0f39099098de06e52437d3f8aab18352efeb79/app/src/main/java/com/afsar/notifications/TitipanScreen.kt].
+## 📸 Tangkapan Layar
 
-Pesan Notifikasi Acak: Pesan notifikasi yang ditampilkan dipilih secara acak dari salah satu item data yang berhasil dimuat [cite: uploaded:mamat1815/notifications/Notifications-fa0f39099098de06e52437d3f8aab18352efeb79/app/src/main/java/com/afsar/notifications/ui/viewmodel/TitipanViewModel.kt].
+| Layar Utama |
+| :---: |
+|  |
 
-📸 Tangkapan Layar
+*([Catatan: Anda dapat mengganti placeholder ini dengan tangkapan layar asli aplikasi.](https://raw.githubusercontent.com/mamat1815/Notifications/refs/heads/master/image.png))*
 
-Layar Utama
+-----
 
-![https://raw.githubusercontent.com/mamat1815/Notifications/refs/heads/master/layarutama.jpeg]
-
-(Catatan: Ganti placeholder di atas dengan tangkapan layar asli aplikasi Anda.)
-
-💾 Mekanisme Notifikasi & Data
+## 💾 Mekanisme Notifikasi & Data
 
 Proyek ini menggunakan kombinasi Coroutines, Flow, dan Notification Manager bawaan Android.
 
-1. Pemuatan Data Asinkronus
+### 1\. Pemuatan Data Asinkronus
 
-Repository: TitipanRepository bertanggung jawab untuk meniru operasi I/O yang memakan waktu (menggunakan Thread.sleep(2000)) dan memuat data JSON menjadi daftar objek Titipan menggunakan Google Gson [cite: uploaded:mamat1815/notifications/Notifications-fa0f39099098de06e52437d3f8aab18352efeb79/app/build.gradle.kts, uploaded:mamat1815/notifications/Notifications-fa0f39099098de06e52437d3f8aab18352efeb79/app/src/main/java/com/afsar/notifications/data/local/TitipanRepository.kt].
+  * **Repository:** `TitipanRepository` bertanggung jawab untuk meniru operasi I/O yang memakan waktu (menggunakan `Thread.sleep(2000)`) dan memuat data JSON menjadi daftar objek `Titipan` menggunakan **Google Gson**.
+  * **ViewModel:** `TitipanViewModel` menggunakan `viewModelScope.launch` untuk memanggil `getTitipanData()` dari Repository secara aman di *background thread*.
 
-ViewModel: TitipanViewModel menggunakan viewModelScope.launch untuk memanggil getTitipanData() dari Repository secara aman di background thread [cite: uploaded:mamat1815/notifications/Notifications-fa0f39099098de06e52437d3f8aab18352efeb79/app/src/main/java/com/afsar/notifications/ui/viewmodel/TitipanViewModel.kt].
+### 2\. Pemicuan Notifikasi
 
-2. Pemicuan Notifikasi
+  * **Flag Reaktif:** ViewModel memiliki `_processFinished: MutableStateFlow<Boolean>`. Setelah data selesai dimuat, nilai `_processFinished` diubah menjadi `true`.
+  * **Effect di UI:** Di `TitipanScreen.kt`, `LaunchedEffect` mengamati `processFinished`. Ketika nilainya menjadi `true`, ia menjalankan logika pengecekan izin notifikasi dan memanggil fungsi `showNotification`.
+  * **Helper Notifikasi:** Fungsi `showNotification(context, message)` membuat `NotificationChannel` (`titipan_channel`) dan membangun notifikasi menggunakan `NotificationCompat.Builder`.
 
-Flag Reaktif: ViewModel memiliki _processFinished: MutableStateFlow<Boolean> [cite: uploaded:mamat1815/notifications/Notifications-fa0f39099098de06e52437d3f8aab18352efeb79/app/src/main/java/com/afsar/notifications/ui/viewmodel/TitipanViewModel.kt]. Setelah data selesai dimuat, nilainya diubah menjadi true.
+-----
 
-Effect di UI: Di TitipanScreen.kt, LaunchedEffect mengamati processFinished. Ketika nilainya menjadi true, ia menjalankan logika pengecekan izin notifikasi dan memanggil fungsi showNotification [cite: uploaded:mamat1815/notifications/Notifications-fa0f39099098de06e52437d3f8aab18352efeb79/app/src/main/java/com/afsar/notifications/TitipanScreen.kt].
+## 🛠️ Tumpukan Teknologi
 
-Helper Notifikasi: Fungsi showNotification(context, message) membuat NotificationChannel (titipan_channel) dan membangun notifikasi menggunakan NotificationCompat.Builder [cite: uploaded:mamat1815/notifications/Notifications-fa0f39099098de06e52437d3f8aab18352efeb79/app/src/main/java/com/afsar/notifications/utility/NotificationHelper.kt].
+  * **Bahasa:** Kotlin
+  * **UI:** Jetpack Compose (Material 3)
+  * **Asinkronus:** Kotlin Coroutines & Flow
+  * **Data Parsing:** Google Gson (`com.google.code.gson`)
 
-🛠️ Tumpukan Teknologi
+-----
 
-Bahasa: Kotlin [cite: uploaded:mamat1815/notifications/Notifications-fa0f39099098de06e52437d3f8aab18352efeb79/app/build.gradle.kts]
+## 📐 Arsitektur Kode (MVVM)
 
-UI: Jetpack Compose (Material 3) [cite: uploaded:mamat1815/notifications/Notifications-fa0f39099098de06e52437d3f8aab18352efeb79/app/build.gradle.kts]
+Aplikasi ini menggunakan pola desain **Model-View-ViewModel (MVVM)**:
 
-Asinkronus: Kotlin Coroutines & Flow [cite: uploaded:mamat1815/notifications/Notifications-fa0f39099098de06e52437d3f8aab18352efeb79/app/src/main/java/com/afsar/notifications/TitipanScreen.kt, uploaded:mamat1815/notifications/Notifications-fa0f39099098de06e52437d3f8aab18352efeb79/app/src/main/java/com/afsar/notifications/ui/viewmodel/TitipanViewModel.kt]
+  * **View (UI):** `TitipanScreen.kt`
+      * Bertanggung jawab untuk menampilkan UI dan menerima *user input* (klik tombol).
+      * Mengonsumsi `StateFlow` dari ViewModel (misalnya `titipanList`, `isLoading`).
+  * **ViewModel:** `TitipanViewModel.kt`
+      * Menyimpan *state* UI (menggunakan `StateFlow`).
+      * Mengandung logika untuk memuat data (`loadData()`) dan menentukan pesan notifikasi.
+      * Berinteraksi dengan Repository.
+  * **Model (Repository & Data):** `TitipanRepository.kt` dan `DataTitip.kt`
+      * `TitipanRepository`: Menyediakan abstraksi untuk sumber data (dalam kasus ini, `assets/titipin-data.json`).
+      * `Titipan`: Model data yang merepresentasikan setiap item titipan.
 
-Data Parsing: Google Gson (com.google.code.gson) [cite: uploaded:mamat1815/notifications/Notifications-fa0f39099098de06e52437d3f8aab18352efeb79/app/build.gradle.kts]
+-----
 
-📐 Arsitektur Kode (MVVM)
+## 🏃 Cara Menjalankan
 
-Aplikasi ini menggunakan pola desain Model-View-ViewModel (MVVM):
-
-View (UI): TitipanScreen.kt [cite: uploaded:mamat1815/notifications/Notifications-fa0f39099098de06e52437d3f8aab18352efeb79/app/src/main/java/com/afsar/notifications/TitipanScreen.kt]
-
-ViewModel: TitipanViewModel.kt [cite: uploaded:mamat1815/notifications/Notifications-fa0f39099098de06e52437d3f8aab18352efeb79/app/src/main/java/com/afsar/notifications/ui/viewmodel/TitipanViewModel.kt]
-
-Model (Repository & Data): TitipanRepository.kt dan DataTitip.kt [cite: uploaded:mamat1815/notifications/Notifications-fa0f39099098de06e52437d3f8aab18352efeb79/app/src/main/java/com/afsar/notifications/data/local/TitipanRepository.kt, uploaded:mamat1815/notifications/Notifications-fa0f39099098de06e52437d3f8aab18352efeb79/app/src/main/java/com/afsar/notifications/data/model/DataTitip.kt]
-
-🏃 Cara Menjalankan
-
-Buka Proyek: Impor proyek ke Android Studio.
-
-Sinkronisasi Gradle: Tunggu hingga Gradle selesai mengunduh dependensi.
-
-Jalankan: Jalankan aplikasi pada emulator atau perangkat.
-
-Uji Notifikasi: Klik tombol "Ambil Data Titipan". Aplikasi akan meminta izin notifikasi (di Android 13+) lalu menampilkan notifikasi setelah data dimuat.
+1.  **Buka Proyek:** Impor proyek ke Android Studio.
+2.  **Sinkronisasi Gradle:** Tunggu hingga Gradle selesai mengunduh dependensi (termasuk Gson).
+3.  **Jalankan:** Jalankan aplikasi pada emulator atau perangkat.
+4.  **Uji Notifikasi:** Klik tombol **"Ambil Data Titipan"**.
+      * Jika dijalankan di Android 13+, aplikasi akan meminta izin notifikasi terlebih dahulu.
+      * Setelah pemuatan data (dengan simulasi jeda 2 detik) selesai, sebuah notifikasi akan muncul di *status bar*.
